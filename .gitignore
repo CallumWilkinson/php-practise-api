@@ -98,3 +98,7 @@ Desktop.ini
 *.temp
 *.swp
 *.swo
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
