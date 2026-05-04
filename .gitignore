@@ -17,6 +17,7 @@ composer.phar
 # Commit .env, .env.dev, and .env.test if they contain safe defaults.
 # Do not commit local machine secrets.
 # ----------------------------------------------------------------------
+.env
 .env.local
 .env.*.local
 .env.local.php
