@@ -7,7 +7,7 @@ namespace App\Controller;
 use App\Application\ProcurementRequest\CreateProcurementRequestService;
 use App\Application\ProcurementRequest\ListProcurementRequestsService;
 use App\Entity\ProcurementRequest;
-use App\Response\ProcurementRequestResponseMapper;
+use App\Mappers\ProcurementRequestResponseMapper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
