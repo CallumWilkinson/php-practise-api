@@ -102,3 +102,6 @@ Desktop.ini
 ###> phpstan/phpstan ###
 phpstan.neon
 ###< phpstan/phpstan ###
+
+
+AGENTS.md
