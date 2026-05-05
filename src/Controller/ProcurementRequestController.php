@@ -37,7 +37,7 @@ final class ProcurementRequestController extends AbstractController
     }
 
     #[Route('/requests', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $entityManager, CreateProcurementRequestService $createProcurementRequestService): JsonResponse
+    public function create(Request $request, CreateProcurementRequestService $createProcurementRequestService): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
 
