@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Controller;
 
+use App\Application\ProcurementRequest\CreateProcurementRequestService;
 use App\Entity\ProcurementRequest;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,7 +37,7 @@ final class ProcurementRequestController extends AbstractController
     }
 
     #[Route('/requests', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function create(Request $request, EntityManagerInterface $entityManager, CreateProcurementRequestService $createProcurementRequestService): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
 
@@ -52,14 +53,10 @@ final class ProcurementRequestController extends AbstractController
             return $this->json(['error' => 'Description is required.'], 400);
         }
 
-        $procurementRequest = new ProcurementRequest();
-        $procurementRequest->setTitle($requestData['title']);
-        $procurementRequest->setDescription($requestData['description']);
-        $procurementRequest->setStatus('draft');
-        $procurementRequest->setCreatedAt(new \DateTimeImmutable());
-
-        $entityManager->persist($procurementRequest);
-        $entityManager->flush();
+        $procurementRequest = $createProcurementRequestService->create(
+            $requestData['title'],
+            $requestData['description']
+        );
 
         return $this->json([
             'id' => $procurementRequest->getId(),
