@@ -5,9 +5,9 @@ declare(strict_types = 1);
 namespace App\Controller;
 
 use App\Application\ProcurementRequest\CreateProcurementRequestService;
+use App\Application\ProcurementRequest\ListProcurementRequestsService;
 use App\Entity\ProcurementRequest;
 use App\Response\ProcurementRequestResponseMapper;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,11 +20,9 @@ final class ProcurementRequestController extends AbstractController
     ) {
     }
     #[Route('/requests', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): JsonResponse
+    public function index(ListProcurementRequestsService $listProcurementRequestsService): JsonResponse
     {
-        $requests = $entityManager
-            ->getRepository(ProcurementRequest::class)
-            ->findAll();
+        $requests = $listProcurementRequestsService->list();
 
         return $this->json($this->responseMapper->mapMany($requests));
     }
