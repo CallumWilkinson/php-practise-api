@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Application\ProcurementRequest\CreateProcurementRequestService;
 use App\Entity\ProcurementRequest;
+use App\Response\ProcurementRequestResponseMapper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,6 +15,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class ProcurementRequestController extends AbstractController
 {
+        public function __construct(
+        private ProcurementRequestResponseMapper $responseMapper
+    ) {
+    }
     #[Route('/requests', methods: ['GET'])]
     public function index(EntityManagerInterface $entityManager): JsonResponse
     {
@@ -21,19 +26,7 @@ final class ProcurementRequestController extends AbstractController
             ->getRepository(ProcurementRequest::class)
             ->findAll();
 
-        $responseData = [];
-
-        foreach ($requests as $procurementRequest) {
-            $responseData[] = [
-                'id' => $procurementRequest->getId(),
-                'title' => $procurementRequest->getTitle(),
-                'description' => $procurementRequest->getDescription(),
-                'status' => $procurementRequest->getStatus(),
-                'createdAt' => $procurementRequest->getCreatedAt()->format('c'),
-            ];
-        }
-
-        return $this->json($responseData);
+        return $this->json($this->responseMapper->mapMany($requests));
     }
 
     #[Route('/requests', methods: ['POST'])]
@@ -58,12 +51,9 @@ final class ProcurementRequestController extends AbstractController
             $requestData['description']
         );
 
-        return $this->json([
-            'id' => $procurementRequest->getId(),
-            'title' => $procurementRequest->getTitle(),
-            'description' => $procurementRequest->getDescription(),
-            'status' => $procurementRequest->getStatus(),
-            'createdAt' => $procurementRequest->getCreatedAt()->format('c'),
-        ], 201);
+            return $this->json(
+            $this->responseMapper->map($procurementRequest),
+            201
+        );
     }
 }
