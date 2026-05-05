@@ -6,12 +6,11 @@ namespace App\Application\ProcurementRequest;
 
 use App\Entity\ProcurementRequest;
 use DateTimeImmutable;
-use Doctrine\ORM\EntityManagerInterface;
 
 final class CreateProcurementRequestService
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private ProcurementRequestRepositoryInterface $procurementRequestRepository
     ) {
     }
 
@@ -23,8 +22,7 @@ final class CreateProcurementRequestService
         $procurementRequest->setStatus('draft');
         $procurementRequest->setCreatedAt(new DateTimeImmutable());
 
-        $this->entityManager->persist($procurementRequest);
-        $this->entityManager->flush();
+        $this->procurementRequestRepository->save($procurementRequest);
 
         return $procurementRequest;
     }
