@@ -7,11 +7,3 @@ parameters:
 
     excludePaths:
         - config/reference.php
-
-    ignoreErrors:
-        -
-            message: '#Property App\\Entity\\SupplierQuote::\$id \(int\|null\) is never assigned int#'
-            path: src/Entity/SupplierQuote.php
-        -
-            message: '#Call to function method_exists\(\) with .+ will always evaluate to true#'
-            path: tests/bootstrap.php

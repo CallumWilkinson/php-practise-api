@@ -6,7 +6,6 @@ namespace App\Controller;
 
 use App\Application\ProcurementRequest\CreateProcurementRequestService;
 use App\Application\ProcurementRequest\ListProcurementRequestsService;
-use App\Entity\ProcurementRequest;
 use App\Mappers\ProcurementRequestResponseMapper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,10 +14,11 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class ProcurementRequestController extends AbstractController
 {
-        public function __construct(
+    public function __construct(
         private ProcurementRequestResponseMapper $responseMapper
     ) {
     }
+
     #[Route('/requests', methods: ['GET'])]
     public function index(ListProcurementRequestsService $listProcurementRequestsService): JsonResponse
     {
@@ -36,11 +36,19 @@ final class ProcurementRequestController extends AbstractController
             return $this->json(['error' => 'Invalid JSON body.'], 400);
         }
 
-        if (empty($requestData['title'])) {
+        if (
+            !array_key_exists('title', $requestData)
+            || !is_string($requestData['title'])
+            || trim($requestData['title']) === ''
+        ) {
             return $this->json(['error' => 'Title is required.'], 400);
         }
 
-        if (empty($requestData['description'])) {
+        if (
+            !array_key_exists('description', $requestData)
+            || !is_string($requestData['description'])
+            || trim($requestData['description']) === ''
+        ) {
             return $this->json(['error' => 'Description is required.'], 400);
         }
 
@@ -49,7 +57,7 @@ final class ProcurementRequestController extends AbstractController
             $requestData['description']
         );
 
-            return $this->json(
+        return $this->json(
             $this->responseMapper->map($procurementRequest),
             201
         );

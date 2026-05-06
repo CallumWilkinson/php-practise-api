@@ -14,7 +14,7 @@ class ProcurementRequest
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id = 0;
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
@@ -30,7 +30,7 @@ class ProcurementRequest
 
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id === 0 ? null : $this->id;
     }
 
     public function getTitle(): ?string
