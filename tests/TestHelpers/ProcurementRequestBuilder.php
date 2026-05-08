@@ -14,6 +14,11 @@ final class ProcurementRequestBuilder
         return self::createWithStatus('draft');
     }
 
+    public static function createSubmitted(): ProcurementRequest
+    {
+        return self::createWithStatus('submitted');
+    }
+
     private static function createWithStatus(string $status): ProcurementRequest
     {
         $procurementRequest = new ProcurementRequest();
