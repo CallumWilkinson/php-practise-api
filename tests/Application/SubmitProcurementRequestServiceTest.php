@@ -45,7 +45,7 @@ final class SubmitProcurementRequestServiceTest extends TestCase
     public function testSubmitThrowsWhenRequestIsAlreadySubmitted(): void 
     {
         $procurementRequest = ProcurementRequestBuilder::createSubmitted();
-        $repository = new FakeProcurementRequestRepository($procurementRequest);
+        $repository = new FakeProcurementRequestRepository();
         $repository->addExistingRequest(123, $procurementRequest);
         $service = new SubmitProcurementRequestService($repository);
 
