@@ -26,4 +26,15 @@ final class ProcurementRequestRepository extends ServiceEntityRepository impleme
         $entityManager->persist($procurementRequest);
         $entityManager->flush();
     }
+
+    public function findById(int $id): ?ProcurementRequest
+    {
+        $procurementRequest = $this->find($id);
+
+        if(!$procurementRequest instanceof ProcurementRequest) {
+            return null;
+        }
+
+        return $procurementRequest;
+    }
 }

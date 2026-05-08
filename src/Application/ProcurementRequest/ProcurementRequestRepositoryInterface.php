@@ -9,6 +9,8 @@ use App\Entity\ProcurementRequest;
 interface ProcurementRequestRepositoryInterface
 {
     public function save(ProcurementRequest $procurementRequest): void;
+
+    public function findById(int $id): ?ProcurementRequest;
     
     /**
      * @return ProcurementRequest[]

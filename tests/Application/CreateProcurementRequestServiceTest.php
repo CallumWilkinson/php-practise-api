@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Application\ProcurementRequest;
 
 use App\Application\ProcurementRequest\CreateProcurementRequestService;
-use App\Application\ProcurementRequest\ProcurementRequestRepositoryInterface;
-use App\Entity\ProcurementRequest;
+use App\Tests\TestHelpers\FakeProcurementRequestRepository;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
@@ -31,27 +30,7 @@ final class CreateProcurementRequestServiceTest extends TestCase
         self::assertInstanceOf(DateTimeImmutable::class, $procurementRequest->getCreatedAt());
 
         self::assertSame(1, $repository->saveCallCount);
-        self::assertSame($procurementRequest, $repository->savedRequest);
+        self::assertSame($procurementRequest, $repository->savedProcurementRequest);
     }
 }
 
-final class FakeProcurementRequestRepository implements ProcurementRequestRepositoryInterface
-{
-    public int $saveCallCount = 0;
-
-    public ?ProcurementRequest $savedRequest = null;
-
-    public function save(ProcurementRequest $procurementRequest): void
-    {
-        $this->saveCallCount++;
-        $this->savedRequest = $procurementRequest;
-    }
-
-    /**
-     * @return ProcurementRequest[]
-     */
-    public function findAll(): array
-    {
-        return [];
-    }
-}
