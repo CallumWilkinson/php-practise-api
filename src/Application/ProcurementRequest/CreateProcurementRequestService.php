@@ -6,6 +6,7 @@ namespace App\Application\ProcurementRequest;
 
 use App\Entity\ProcurementRequest;
 use DateTimeImmutable;
+use InvalidArgumentException;
 
 final class CreateProcurementRequestService
 {
@@ -16,6 +17,14 @@ final class CreateProcurementRequestService
 
     public function create(string $title, string $description): ProcurementRequest
     {
+        if (trim($title) === '') {
+            throw new InvalidArgumentException('Title cannot be blank.');
+        }
+
+        if (trim($description) === '') {
+            throw new InvalidArgumentException('Description cannot be blank.');
+        }
+
         $procurementRequest = new ProcurementRequest();
         $procurementRequest->setTitle($title);
         $procurementRequest->setDescription($description);
