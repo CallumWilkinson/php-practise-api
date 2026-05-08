@@ -1,6 +1,6 @@
 # Procurement Request API
 
-A small Symfony API for creating and listing procurement requests.
+A small Symfony 8 API for working with procurement requests. The current codebase exposes create and list endpoints over HTTP, and also contains an application-level submit workflow that is covered by unit tests but not yet wired to a controller route.
 
 ## Stack
 
@@ -8,17 +8,54 @@ A small Symfony API for creating and listing procurement requests.
 - Symfony 8
 - Doctrine ORM
 - PostgreSQL
-- PHPUnit
+- PHPUnit 13
 - PHPStan
 
-## Features
+## Current Project Shape
 
-- Create a procurement request
-- List procurement requests
-- Persist data with Doctrine
-- Run tests and static analysis locally
+The codebase is organised as a simple layered Symfony application:
 
-## API Endpoints
+- `src/Controller`
+  HTTP entry points. `ProcurementRequestController` currently handles `GET /requests` and `POST /requests`.
+- `src/Application/ProcurementRequest`
+  Application services and repository contract:
+  - `CreateProcurementRequestService`
+  - `ListProcurementRequestsService`
+  - `SubmitProcurementRequestService`
+  - domain-specific exceptions
+- `src/Entity`
+  Doctrine entity for `ProcurementRequest`.
+- `src/Repository`
+  Doctrine repository implementation for persistence.
+- `src/Mappers`
+  Response mapping from entity objects to JSON-ready arrays.
+- `tests/Application`
+  Unit tests for application services.
+- `tests/Controller`
+  Functional HTTP tests for the Symfony controller.
+- `tests/Mappers`
+  Mapper tests.
+- `tests/TestHelpers`
+  Test builder and fake repository used by unit tests.
+- `migrations`
+  Doctrine migration history.
+
+## Domain Model
+
+The main domain object is `ProcurementRequest`, which currently stores:
+
+- `id`
+- `title`
+- `description`
+- `status`
+- `createdAt`
+
+Current statuses used by the application layer:
+
+- `draft`
+- `submitted`
+
+## Current HTTP API
 
 ### `GET /requests`
 
@@ -40,7 +77,7 @@ Example response:
 
 ### `POST /requests`
 
-Creates a new procurement request.
+Creates a new procurement request in `draft` status.
 
 Example request:
 
@@ -63,29 +100,49 @@ Example response:
 }
 ```
 
-Validation errors return `400 Bad Request`.
+Validation errors currently return `400 Bad Request` with a simple JSON error payload.
+
+## Internal Application Flows
+
+The application layer currently supports three use cases:
+
+- create a procurement request
+- list procurement requests
+- submit a draft procurement request
+
+The submit flow exists in `SubmitProcurementRequestService` and enforces:
+
+- not found requests raise a domain exception
+- only requests in `draft` status can transition to `submitted`
+
+There is not currently a public HTTP submit endpoint documented in this repository.
 
 ## Local Setup
 
-1. Install PHP dependencies:
+1. Install PHP dependencies.
 
 ```powershell
 composer install
 ```
 
-2. Start the database services:
+2. Start the local database services.
 
 ```powershell
 docker compose up -d
 ```
 
-3. Run database migrations:
+This starts:
+
+- PostgreSQL on `localhost:5432`
+- pgAdmin on `http://localhost:5050`
+
+3. Run database migrations.
 
 ```powershell
 php bin/console doctrine:migrations:migrate
 ```
 
-4. Start the application with your preferred local PHP server.
+4. Start the Symfony app with your preferred local server.
 
 If you use Symfony CLI:
 
@@ -95,7 +152,7 @@ symfony server:start
 
 ## Useful Commands
 
-Run tests:
+Run the test suite:
 
 ```powershell
 vendor\bin\phpunit
@@ -107,7 +164,13 @@ Run static analysis:
 vendor\bin\phpstan analyse
 ```
 
-Run the combined project checks:
+Run PHP linting via the Composer script:
+
+```powershell
+composer lint
+```
+
+Run the main local quality checks:
 
 ```powershell
 composer build
