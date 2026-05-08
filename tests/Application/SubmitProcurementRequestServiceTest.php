@@ -46,6 +46,7 @@ final class SubmitProcurementRequestServiceTest extends TestCase
     {
         $procurementRequest = ProcurementRequestBuilder::createSubmitted();
         $repository = new FakeProcurementRequestRepository($procurementRequest);
+        $repository->addExistingRequest(123, $procurementRequest);
         $service = new SubmitProcurementRequestService($repository);
 
         $this->expectException(ProcurementRequestCannotBeSubmittedException::class);
