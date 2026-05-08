@@ -1,4 +1,4 @@
-# PHP Practice API
+# Procurement Request API
 
 A small Symfony API for creating and listing procurement requests.
 
@@ -28,13 +28,13 @@ Example response:
 
 ```json
 [
-  {
-    "id": 1,
-    "title": "Office fit-out",
-    "description": "Procurement for office fit-out works",
-    "status": "draft",
-    "createdAt": "2026-05-08T10:15:00+00:00"
-  }
+    {
+        "id": 1,
+        "title": "Office fit-out",
+        "description": "Procurement for office fit-out works",
+        "status": "draft",
+        "createdAt": "2026-05-08T10:15:00+00:00"
+    }
 ]
 ```
 
@@ -46,8 +46,8 @@ Example request:
 
 ```json
 {
-  "title": "Office fit-out",
-  "description": "Procurement for office fit-out works"
+    "title": "Office fit-out",
+    "description": "Procurement for office fit-out works"
 }
 ```
 
@@ -55,11 +55,11 @@ Example response:
 
 ```json
 {
-  "id": 1,
-  "title": "Office fit-out",
-  "description": "Procurement for office fit-out works",
-  "status": "draft",
-  "createdAt": "2026-05-08T10:15:00+00:00"
+    "id": 1,
+    "title": "Office fit-out",
+    "description": "Procurement for office fit-out works",
+    "status": "draft",
+    "createdAt": "2026-05-08T10:15:00+00:00"
 }
 ```
 
