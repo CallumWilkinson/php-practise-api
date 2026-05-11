@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use JsonException;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\TestHelpers\JsonResponseHelper;
 
-final class ProcurementRequestControllerTest extends WebTestCase
+final class ProcurementRequestControllerPostTest extends WebTestCase
 {
     /**
      * @throws JsonException
@@ -34,7 +34,7 @@ final class ProcurementRequestControllerTest extends WebTestCase
         //assert
         self::assertResponseStatusCodeSame(201);
 
-        $responseData = self::decodeJsonResponse($client);
+        $responseData = JsonResponseHelper::decodeJsonResponse($client);
 
         self::assertSame('Laptop approval', $responseData['title']);
         self::assertSame('Need a laptop for a new starter.', $responseData['description']);
@@ -63,7 +63,7 @@ final class ProcurementRequestControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(400);
 
-        $responseData = self::decodeJsonResponse($client);
+        $responseData = JsonResponseHelper::decodeJsonResponse($client);
 
         self::assertArrayHasKey('error', $responseData);
     }
@@ -88,24 +88,12 @@ final class ProcurementRequestControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(400);
 
-        $responseData = self::decodeJsonResponse($client);
+        $responseData = JsonResponseHelper::decodeJsonResponse($client);
 
         self::assertArrayHasKey('error', $responseData);
     }
 
-    /**
-     * @throws JsonException
-     */
-    public function testGetRequestsReturnsJsonList(): void
-    {
-        $client = self::createClient();
 
-        $client->request('GET', '/requests');
-
-        self::assertResponseIsSuccessful();
-
-        $responseData = self::decodeJsonResponse($client);
-    }
 
     /**
      * @throws JsonException
@@ -128,31 +116,9 @@ final class ProcurementRequestControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(400);
 
-        $responseData = self::decodeJsonResponse($client);
+        $responseData = JsonResponseHelper::decodeJsonResponse($client);
 
         self::assertArrayHasKey('error', $responseData);
     }
 
-    /**
-     * @return array<mixed>
-     *
-     * @throws JsonException
-     */
-    private static function decodeJsonResponse(KernelBrowser $client): array
-    {
-        $responseContent = $client->getResponse()->getContent();
-
-        self::assertIsString($responseContent);
-
-        $responseData = json_decode(
-            $responseContent,
-            true,
-            512,
-            JSON_THROW_ON_ERROR
-        );
-
-        self::assertIsArray($responseData);
-
-        return $responseData;
-    }
 }
