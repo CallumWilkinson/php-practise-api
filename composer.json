@@ -79,11 +79,20 @@
     "scripts": {
         "analyse": "vendor\\bin\\phpstan analyse",
         "lint": "powershell -NoProfile -Command \"Get-ChildItem -Recurse -Filter *.php src,tests | ForEach-Object { php -l $_.FullName }\"",
-        "build": [
-            "@lint",
+        "start": [
+            "docker compose up -d",
+            "php bin/console doctrine:migrations:migrate --no-interaction",
+            "symfony server:start"
+        ],
+        "check": [
+            "vendor/bin/phpstan analyse",
             "php bin/console lint:container",
-            "vendor\\bin\\phpstan analyse",
-            "vendor\\bin\\phpunit"
+            "php bin/console lint:yaml config",
+            "vendor/bin/phpunit"
+        ],
+        "stop": [
+            "symfony server:stop",
+            "docker compose down"
         ],
         "test": "phpunit",
         "auto-scripts": {
