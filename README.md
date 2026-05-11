@@ -1,6 +1,6 @@
 # Procurement Request API
 
-A small Symfony 8 API for working with procurement requests. The current codebase exposes create and list endpoints over HTTP, and also contains an application-level submit workflow that is covered by unit tests but not yet wired to a controller route.
+A small Symfony 8 API for working with procurement requests. The current codebase exposes list, create, and submit workflows over HTTP.
 
 ## Stack
 
@@ -16,7 +16,10 @@ A small Symfony 8 API for working with procurement requests. The current codebas
 The codebase is organised as a simple layered Symfony application:
 
 - `src/Controller`
-  HTTP entry points. `ProcurementRequestController` currently handles `GET /requests` and `POST /requests`.
+  HTTP entry points. `ProcurementRequestController` currently handles:
+  - `GET /requests`
+  - `POST /requests`
+  - `POST /requests/{id}/submit`
 - `src/Application/ProcurementRequest`
   Application services and repository contract:
   - `CreateProcurementRequestService`
@@ -32,7 +35,7 @@ The codebase is organised as a simple layered Symfony application:
 - `tests/Application`
   Unit tests for application services.
 - `tests/Controller`
-  Functional HTTP tests for the Symfony controller.
+  Functional HTTP tests for the Symfony controller. `GET /requests` and `POST /requests` are covered here today.
 - `tests/Mappers`
   Mapper tests.
 - `tests/TestHelpers`
@@ -102,6 +105,27 @@ Example response:
 
 Validation errors currently return `400 Bad Request` with a simple JSON error payload.
 
+### `POST /requests/{id}/submit`
+
+Submits a draft procurement request by ID.
+
+Successful response:
+
+```json
+{
+    "id": 1,
+    "title": "Office fit-out",
+    "description": "Procurement for office fit-out works",
+    "status": "submitted",
+    "createdAt": "2026-05-08T10:15:00+00:00"
+}
+```
+
+Current error responses:
+
+- `404 Not Found` when the request does not exist
+- `409 Conflict` when the request is not in `draft` status
+
 ## Internal Application Flows
 
 The application layer currently supports three use cases:
@@ -110,12 +134,10 @@ The application layer currently supports three use cases:
 - list procurement requests
 - submit a draft procurement request
 
-The submit flow exists in `SubmitProcurementRequestService` and enforces:
+The submit flow in `SubmitProcurementRequestService` enforces:
 
 - not found requests raise a domain exception
 - only requests in `draft` status can transition to `submitted`
-
-There is not currently a public HTTP submit endpoint documented in this repository.
 
 ## Local Setup
 
@@ -150,6 +172,12 @@ If you use Symfony CLI:
 symfony server:start
 ```
 
+Or use the existing Composer helper to bring up Docker, run migrations, and start the Symfony server:
+
+```powershell
+composer start
+```
+
 ## Useful Commands
 
 Run the test suite:
@@ -173,5 +201,17 @@ composer lint
 Run the main local quality checks:
 
 ```powershell
-composer build
+composer check
+```
+
+Run the PHPUnit suite via Composer:
+
+```powershell
+composer test
+```
+
+Stop the local app stack:
+
+```powershell
+composer stop
 ```
