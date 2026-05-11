@@ -5,9 +5,13 @@ declare(strict_types = 1);
 namespace App\Controller;
 
 use App\Application\ProcurementRequest\CreateProcurementRequestService;
+use App\Application\ProcurementRequest\Exception\ProcurementRequestCannotBeSubmittedException;
+use App\Application\ProcurementRequest\Exception\ProcurementRequestNotFoundException;
 use App\Application\ProcurementRequest\ListProcurementRequestsService;
+use App\Application\ProcurementRequest\SubmitProcurementRequestService;
 use App\Mappers\ProcurementRequestResponseMapper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -62,4 +66,27 @@ final class ProcurementRequestController extends AbstractController
             201
         );
     }
+
+    #[Route('/requests/{id<\d+>}/submit', methods: ['POST'])]
+    public function submit(
+        int $id,
+        SubmitProcurementRequestService $submitProcurementRequestService
+    ) : JsonResponse {
+        try {
+            $procurementRequest = $submitProcurementRequestService->submit($id);
+        } catch (ProcurementRequestNotFoundException) {
+         return $this->json(
+            ['error' => 'Procurement request not found.'],
+            Response::HTTP_NOT_FOUND
+         );
+        } catch (ProcurementRequestCannotBeSubmittedException $exception) {
+            return $this->json(
+                ['error' => $exception->getMessage()],
+                Response::HTTP_CONFLICT
+            );
+         }
+
+         return $this->json($this->responseMapper->map($procurementRequest));
+        }
+    
 }
